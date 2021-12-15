@@ -102,7 +102,18 @@
 
 ;; Ex. 6
 
+(define (bst-min t)
+  (cond [(empty? (node-left t)) (node-key t)]
+        [else (bst-min (node-left t))])
+  )
+
+(check-expect (bst-min (make-node 6 '() '())) 6)
+(check-expect (bst-min test-bst) 0)
+
+; Code for a binary tree, not necessarily a BST.
+
 #|
+
 (define (bst-min t)
   (bst-min/acc t (node-key t))
   )
@@ -115,16 +126,19 @@
     ))
 |#
 
-(define (bst-min t)
-  (cond [(empty? (node-left t)) (node-key t)]
-        [else (bst-min (node-left t))])
-  )
-
-(check-expect (bst-min (make-node 6 '() '())) 6)
-(check-expect (bst-min test-bst) 0)
-
 
 ;; bst-max
+
+
+(define (bst-max t)
+  (cond [(empty? (node-right t)) (node-key t)]
+        [else (bst-max (node-right t))])
+  )
+
+(check-expect (bst-max (make-node 6 '() '())) 6)
+(check-expect (bst-max test-bst) 14)
+
+; Code for a binary tree, not necessarily a BST.
 
 #|
 (define (bst-max t)
@@ -138,14 +152,6 @@
                (bst-max/acc (node-right t) acc))]
     ))
 |#
-
-(define (bst-max t)
-  (cond [(empty? (node-right t)) (node-key t)]
-        [else (bst-max (node-right t))])
-  )
-
-(check-expect (bst-max (make-node 6 '() '())) 6)
-(check-expect (bst-max test-bst) 14)
 
 
 ;; bst-add
@@ -168,9 +174,24 @@
               (make-node 2 '() (make-node 4 '() '())))
 
 
+;; bst-from-list (actual)
+
+(define (bst-from-list t)
+  (cond [(empty? t) empty]
+        [else (bst-add (first t) (bst-from-list (rest t)))])
+  )
+
+(check-expect (bst-from-list empty) empty)
+(check-expect (bst-from-list '(3 1 3)) (make-node 3 (make-node 1 '() '()) '()))
+(check-expect (bst-from-list (list 34 4 5 4 3 92 8))
+(make-node 8
+ (make-node 3 '() (make-node 4 '()
+   (make-node 5 '() '())))
+ (make-node 92 (make-node 34 '() '()) '())))
+
 ;; bst-from-list (hax)
 
-(define (bst-from-list lon)
+(define (bst-from-list-hax lon)
   (bst-from-list-helper (quicksort lon <))
   )
 
@@ -181,7 +202,7 @@
     )
   )
 
-(check-expect (bst-from-list (list 3 4 9 0 1 99 2 13))
+(check-expect (bst-from-list-hax (list 3 4 9 0 1 99 2 13))
               (make-node 0 empty
                  (make-node 1 empty
                  (make-node 2 empty
@@ -193,12 +214,41 @@
                 empty)))))))))
 
 
+;; bst-from-list/acc
+
+(define (bst-from-list/acc t)
+  (cond [(empty? t) empty]
+        [else (bst-from-list/accc (rest t) (bst-add (first t) empty))]
+  ))
+
+(define (bst-from-list/accc t acc)
+  (cond [(empty? t) acc]
+        [else (bst-from-list/accc (rest t) (bst-add (first t) acc))])
+  )
+
+(check-expect (bst-from-list/acc empty) empty)
+(check-expect (bst-from-list/acc '(3 1 3)) (make-node 3 (make-node 1 '() '()) '()))
+(check-expect (bst-from-list/acc (list 34 4 5 4 3 92 8))
+(make-node 34
+ (make-node 4
+  (make-node 3 '() '())
+  (make-node 5 '() (make-node 8 '() '())))
+ (make-node 92 '() '())))
+
+ 
 
 ;; search-bst
 
-(define (search-bst t)
-  
+(define (search-bst n t)
+  (or (and (not (empty? t)) (= (node-key t) n))
+      (and (not (empty? (node-left t))) (search-bst n (node-left t)))
+      (and (not (empty? (node-right t))) (search-bst n (node-right t))))
   )
+
+(check-expect (search-bst 3 test-bst) true)
+(check-expect (search-bst 14 test-bst) true)
+(check-expect (search-bst 9 test-bst) false)
+
 
 
 
