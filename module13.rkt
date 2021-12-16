@@ -42,10 +42,34 @@
 
 
 (define tree (make-gnode 40 (list (make-gnode 28 '(9 32)) (make-gnode 70 '(52 102)))))
-(check-expect (reverse-gt tree) empty)
+(check-expect (reverse-gt tree)
+              (make-gnode 40
+                          (list
+                           (make-gnode 70 (list 102 52))
+                           (make-gnode 28 (list 32 9)))))
 
 
 ;; Ex. 3
 
-;(define (most-populated-level)
-;  )
+(define (most-populated-level gt)
+  (most-populated-level/acc gt 1 0)
+  )
+
+(define (most-populated-level/acc gt n level)
+  (cond [(empty? gt) n]
+        [(number? gt) gt]
+        [(> (length (gnode-children gt)) n)
+         (map (lambda (x) (most-populated-level/acc x (length (gnode-children gt)) (add1 level))) (gnode-children gt))]
+        [else (map (lambda (x) (most-populated-level/acc x n (add1 level))) (gnode-children gt))]
+        )
+  )
+
+(define (most-populated-level2 logt n level)
+  (cond [(empty? gt) n]
+        [(number? (first logt)) (most-populated-level2 (rest logt) n level)]
+        [((most-populated-level/acc)])
+  )
+  
+
+
+(most-populated-level tree)
