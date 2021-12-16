@@ -70,16 +70,8 @@
 (check-expect (keys-larger-than A 2) (list 3 5 7 9))
 
 ;; Part e)
+;; This is legit hard lmao
 
-(define (height tree)
-  (cond [(number? tree) 0]
-        [(list? tree) (+ 1 (height/list tree))]))
-
-(define (height/list lot)
-  (cond [(empty? lot) 0]
-        [else (max (height (first lot)) (height/list (rest lot)))]))
-
-(check-expect (height '(1 2 3 (4 5 (6 7 (9 8))) (100 (99 (98 (97)))))) 5) 
 
 ;; Question 8
 
@@ -306,23 +298,10 @@
 ;; Question 12
 
 ;; Part a)
-(define (make-add1-gen stored)
-  (lambda (x) (cond [(symbol=? x 'value) stored]
-                    [(symbol=? x 'next) (make-add1-gen (add1 stored))])))
 
 
 
-(define g (make-add1-gen 0))
-(check-expect (g 'value) 0)
-(check-expect ((g 'next) 'value) 1)
-(check-expect (((g 'next) 'next) 'value) 2)
 
-
-;; Part b)
-(define (all-values gen-list)
-  (map (lambda (f) (f 'value)) gen-list))
-
-(check-expect (all-values (list g (g 'next) ((g 'next) 'next))) (list 0 1 2))
 
 
 
