@@ -251,6 +251,53 @@
 
 ;; Part d)
 
+;; can only use hofs hmm
+
+(define (reverse-graph G)
+  (foldr (lambda (x y) (append y (list (list (first x) (in-neighbours (first x) G))))) empty G)
+  )
+
+(check-expect (reverse-graph graph)
+              (list
+               (list 'K (list 'E 'F))
+               (list 'J (list 'B 'D))
+               (list 'H (list 'F 'J))
+               (list 'F (list 'D))
+               (list 'E (list 'A 'B))
+               (list 'D (list 'A))
+               (list 'C (list 'A))
+               (list 'B '())
+               (list 'A '())))
+
+
+;; Question 11
+
+;; Part a)
+(define (quick-select lon n)
+  (local [(define (insert x lon)
+            (cond [(empty? lon) (cons x empty)]
+                  [(< x (first lon)) (cons x lon)]
+                  [else (cons (first lon) (insert x (rest lon)))]))
+
+          (define (sort lon new)
+            (cond [(empty? lon) new]
+                  [else (sort (rest lon) (insert (first lon) new))]))
+
+          (define (helper sortedlist m)
+            (cond
+              [(empty? sortedlist) empty]
+              [(= m n) (first sortedlist)]
+              [else (helper (rest sortedlist) (add1 m))]))
+          ]
+    (helper (sort lon empty) 1)))
+    
+
+(check-expect (quick-select '(2 3.1 2 -5 0 4 0) 5) 2)
+
+
+;; Question 12
+
+;; Part a)
 
 
 
